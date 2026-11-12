@@ -9,7 +9,7 @@ test('client mode', (t) =>
     t.comment(`custodial = ${options.custodial}`)
 
     const connect = t.test('connect')
-    connect.plan(6)
+    connect.plan(7)
 
     const io = t.test('read and write')
     io.plan(2)
@@ -24,6 +24,7 @@ test('client mode', (t) =>
       .once('open', () => {
         connect.alike(socket.publicKey, b.defaultKeyPair.publicKey)
         connect.alike(socket.remotePublicKey, server.publicKey)
+        connect.execution(() => socket.sendKeepAlive(), 'sendKeepAlive (hyperswarm calls it on a duplicate connection)')
 
         socket
           .once('data', (data) => io.alike(data.toString(), 'pong'))
